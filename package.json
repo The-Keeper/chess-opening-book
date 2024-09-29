@@ -1,0 +1,39 @@
+{
+  "name": "csi-gen-sim",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+    "lint": "prettier --check . && eslint .",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "@sveltejs/adapter-auto": "^3.2.5",
+    "@sveltejs/adapter-static": "^3.0.5",
+    "@sveltejs/kit": "^2.6.1",
+    "@sveltejs/vite-plugin-svelte": "^3.1.2",
+    "@types/eslint": "^8.56.12",
+    "@unocss/core": "^0.61.9",
+    "@unocss/extractor-svelte": "^0.61.9",
+    "@unocss/preset-icons": "^0.61.9",
+    "@unocss/preset-uno": "^0.61.9",
+    "eslint": "^9.11.1",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-svelte": "^2.44.1",
+    "globals": "^15.9.0",
+    "prettier": "^3.3.3",
+    "prettier-plugin-svelte": "^3.2.7",
+    "svelte": "^4.2.19",
+    "svelte-check": "^3.8.6",
+    "tslib": "^2.7.0",
+    "typescript": "^5.6.2",
+    "typescript-eslint": "^8.7.0",
+    "unocss": "^0.61.9",
+    "vite": "^5.4.8"
+  },
+  "type": "module"
+}
