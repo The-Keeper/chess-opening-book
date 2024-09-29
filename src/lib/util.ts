@@ -18,10 +18,8 @@ export function toDests(chess: Chess) {
 // Play a move and toggle whose turn it is
 export function playOtherSide(chessground: Chessground, chess: Chess) {
     return (orig: string, dest: string) => {
-        let move;
-        try {
-            move = chess.move({ from: orig, to: dest });
-        } catch { }
+        let move = chess.move({ from: orig, to: dest });
+        console.log(move);
         const color = chess.turn() == 'w' ? 'white' : 'black';
         chessground.set({
             turnColor: color,
