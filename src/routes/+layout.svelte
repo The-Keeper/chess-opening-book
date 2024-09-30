@@ -1,5 +1,5 @@
 <script lang="ts">
-  import 'uno.css';
+  import '@picocss/pico'
 </script>
 
 <main class="mx-auto">
