@@ -39,18 +39,20 @@
 	};
 
 
-	function makeMoveInto( logic: Chess, gt: GameTree, pt: any ) {
+	function makeMoveInto( logic: Chess, gt: GameTree, pt: any, sequence = false ) {
 		const notation = pt?.notation?.notation;
-		// logic.move(notation);
-		// console.log( logic.turn(), logic.fen() );
-		// logic.undo()
-
-		console.log(notation);
-
+		console.log('MOVE', notation);
+		logic.move(notation);
+		console.log( logic.turn(), logic.fen() );
 		if (pt.variations) {
 			pt.variations.forEach((variation: any) => {
-			makeMoveInto(logic, gt, variation);
+				variation.forEach((move: any) => {
+					makeMoveInto(logic, gt, move, false);
+				});
 		});
+		}
+		if (!sequence) {
+			logic.undo();
 		}
 	}
 
@@ -64,7 +66,7 @@
 			console.log(result.fen)
 			game.moves.forEach(move => {
 				const notation = move.notation.notation;
-				makeMoveInto(logic, result, move);
+				makeMoveInto(logic, result, move, true);
 			});
 		}
 	}
