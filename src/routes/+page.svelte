@@ -42,8 +42,8 @@
 	function makeMoveInto( logic: Chess, gt: GameTree, pt: any, sequence = false ) {
 		const notation = pt?.notation?.notation;
 		console.log('MOVE', notation);
-		logic.move(notation);
-		console.log( logic.turn(), logic.fen() );
+		// logic.move(notation);
+		// console.log( logic.turn(), logic.fen() );
 		if (pt.variations) {
 			pt.variations.forEach((variation: any) => {
 				variation.forEach((move: any) => {
@@ -51,9 +51,10 @@
 				});
 		});
 		}
-		if (!sequence) {
-			logic.undo();
-		}
+		// if (!sequence) {
+		// 	logic.undo();
+		// }
+		console.log(notation);
 	}
 
 	function buildTree() {
@@ -63,15 +64,17 @@
 		if (parsed.length) {
 			let game = parsed[0] as ParseTree;
 			console.log(game);
-			console.log(result.fen)
-			game.moves.forEach(move => {
+
+			for (const move of game.moves) {
 				const notation = move.notation.notation;
+				
 				makeMoveInto(logic, result, move, true);
-			});
+				console.log('next prime move');
+			}
 		}
 	}
 
-	let pgnToLoad = `1. e4 e5 (1... Bg6 2. Bf4 ) (1... d5 2. exd5) *`
+	let pgnToLoad = `1. e4 (1. d4 Nf6) 1... e5 2. Nf3 (2. Bc4 f6 3. Nf3 (3. Qh5+ g6 4. Qh3)) (2. d4 exd4) 2... Nc6 3. Bb5`
 </script>
 
 <div class="container" id="board">
