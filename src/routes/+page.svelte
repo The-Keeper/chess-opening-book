@@ -31,46 +31,57 @@
 		});
 	});
 
+	type GameStateNode = {
+		id: number,
+		parentId: number | null,
 
-	type GameTree = {
-		parent: GameTree,
-		fen: string,
-		children: GameTree[]
-	};
-
-
-	function makeMoveInto( logic: Chess, gt: GameTree, pt: any, sequence = false ) {
-		const notation = pt?.notation?.notation;
-		console.log('MOVE', notation);
-		// logic.move(notation);
-		// console.log( logic.turn(), logic.fen() );
-		if (pt.variations) {
-			pt.variations.forEach((variation: any) => {
-				variation.forEach((move: any) => {
-					makeMoveInto(logic, gt, move, false);
-				});
-		});
-		}
-		// if (!sequence) {
-		// 	logic.undo();
-		// }
-		console.log(notation);
+		move: string | null; // move that reached that position from parent
+		fen: string;
 	}
 
+	type GameVariationsData = Array<GameStateNode>
+
+	function addVariationToRepertoire( repertoire: GameVariationsData, logic: Chess, variation: any[], fromNode: GameStateNode ) {
+		console.log('BEFORE', logic.fen(), fromNode)
+		for (let i = 0; i < variation.length; i++) {
+			const move = variation[i];
+			const notation = move?.notation?.notation;
+
+			move.variations.forEach((move_var: any[]) => {
+				addVariationToRepertoire(repertoire, logic, move_var, fromNode)
+			});
+
+			logic.move(notation)
+
+			let newNode: GameStateNode = { fen: logic.fen(), id: repertoire.length, parentId: fromNode.id, move: notation } 
+
+			repertoire.push(newNode);
+
+		}
+		for (let i = 0; i < variation.length; i++) {
+			logic.undo();
+		}
+
+
+
+		console.log('AFTER', logic.fen())
+
+	}
+
+	
 	function buildTree() {
-		let result = {} as GameTree;
-		let logic = new Chess()
-		result.fen = logic.fen();
+	 	let repertoire: GameVariationsData = [];
+	 	let logic = new Chess();
+        let startingPosition: GameStateNode = { fen: logic.fen(), parentId: null, id: 0, move: null }
+
+		repertoire.push(startingPosition);
+
 		if (parsed.length) {
 			let game = parsed[0] as ParseTree;
 			console.log(game);
 
-			for (const move of game.moves) {
-				const notation = move.notation.notation;
-				
-				makeMoveInto(logic, result, move, true);
-				console.log('next prime move');
-			}
+			addVariationToRepertoire(repertoire, logic, game.moves, startingPosition);
+			console.log(repertoire);
 		}
 	}
 
