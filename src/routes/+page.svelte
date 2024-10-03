@@ -42,8 +42,9 @@
 	type GameVariationsData = Array<GameStateNode>
 
 	function addVariationToRepertoire( repertoire: GameVariationsData, logic: Chess, variation: any[], fromNode: GameStateNode ) {
-		let parentId = fromNode.id;
 		let state = fromNode;
+		let parentId: number | null = state.id;
+
 		for (let i = 0; i < variation.length; i++) {
 			const move = variation[i];
 			const notation = move?.notation?.notation;
@@ -55,14 +56,19 @@
 			logic.move(notation)
 
 			state = { fen: logic.fen(), id: repertoire.length, parentId, move: notation } 
+			// console.log(state);
 
 			repertoire.push(state);
 			parentId = state.id;
+			// console.log({parentId});
+
 		}
 		for (let i = 0; i < variation.length; i++) {
+			// console.log('UNDO');
+			parentId = state.parentId;
 			logic.undo();
-			if (state.parentId) {
-				state = repertoire[state.parentId];
+			if (parentId) {
+				state = repertoire[parentId];
 			}
 		}
 	}
