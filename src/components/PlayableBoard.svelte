@@ -103,11 +103,17 @@
 
 <style>
 	.container {
+		position: relative;
 		width: 400px;
 		height: 400px;
 	}
 
 	.modal {
-		position: absolute,
+		display: flex; /* or inline-flex */
+		flex-direction: column;
+		position: absolute; /* Stay in place */
+		z-index: 100; /* Sit on top */
+		/* left: 0; */
+		top: 0;
 	}
 </style>
