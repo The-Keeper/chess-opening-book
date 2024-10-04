@@ -30,6 +30,7 @@
 	function makeMove(from: string, to: string, promotion?: string) { 
 		// after move accepted
 		const move = chess.move({from, to, promotion});
+		console.log(move);
 
 		fen = move.after;
 		const color = chess.turn() == 'w' ? 'white' : 'black';
@@ -61,13 +62,13 @@
 
 	}
 
-	let config = {
-		movable: {
-			color: 'white' as "white" | "black",
-			free: false,
-			dests: toDests(chess)
-		}
-	};
+	// let config = {
+	// 	movable: {
+	// 		color: 'white' as "white" | "black",
+	// 		free: false,
+	// 		dests: toDests(chess)
+	// 	}
+	// };
 
 	onMount(async () => {
 		chessground.set({
@@ -83,7 +84,7 @@
 </script>
 
 <div class="container" id="board">
-	<Chessground bind:this={chessground} {config} {fen} />
+	<Chessground bind:this={chessground} {fen} />
 	{#if showPromotionDialog}
 		<div class="modal">
 			{#each ['q', 'n', 'r', 'b'] as figure}
