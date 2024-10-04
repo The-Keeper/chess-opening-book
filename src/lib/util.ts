@@ -23,9 +23,10 @@ export function playOtherSide(chessground: Chessground, chess: Chess) {
         const color = chess.turn() == 'w' ? 'white' : 'black';
         chessground.set({
             turnColor: color,
+            fen: move.after,
             movable: {
                 color: color,
-                dests: toDests(chess)
+                dests: toDests(chess),
             }
         });
     };
