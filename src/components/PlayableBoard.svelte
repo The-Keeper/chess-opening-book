@@ -8,7 +8,7 @@
 	export let fen: string | undefined = undefined;
 	let chess = new Chess(fen);
 	let chessground: Chessground;
-	$: fen = chess.fen();
+	fen = chess.fen();
 
 	let showPromotionDialog = false;
 	let promotionDialog: HTMLDialogElement;
@@ -30,7 +30,8 @@
 	function makeMove(from: string, to: string, promotion?: string) { 
 		// after move accepted
 		const move = chess.move({from, to, promotion});
-		const fen = move.after;
+
+		fen = move.after;
 		const color = chess.turn() == 'w' ? 'white' : 'black';
 		const dests = toDests(chess);
 		chessground.set({
