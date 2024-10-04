@@ -5,7 +5,7 @@
 	import { onMount } from 'svelte';
 	import {toDests, playOtherSide} from '$lib/util';
 
-	let fen = `rnbqkb1r/p1p1Pp1p/1p3n2/7Q/6p1/8/PPPP1PPP/RNB1KBNR w KQkq - 1 6`
+	export let fen: string | undefined = undefined;
 	let chess = new Chess(fen);
 	let chessground: Chessground;
 	$: fen = chess.fen();
