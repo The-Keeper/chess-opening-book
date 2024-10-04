@@ -33,53 +33,59 @@
 
 	type GameStateNode = {
 		id: number,
-		parentId: number | null,
 
-		move: string | null; // move that reached that position from parent
 		fen: string;
 	}
 
-	type GameVariationsData = Array<GameStateNode>
+	type GameMoveEdge = {
+		notation: String,
+		from: GameStateNode,
+		to: GameStateNode
+	}
+
+	type GameVariationsData = { 
+		states: GameStateNode[],
+		moves: GameMoveEdge[]
+	}
 
 	function addVariationToRepertoire( repertoire: GameVariationsData, logic: Chess, variation: any[], fromNode: GameStateNode ) {
 		let state = fromNode;
-		let parentId: number | null = state.id;
 
 		for (let i = 0; i < variation.length; i++) {
 			const move = variation[i];
-			const notation = move?.notation?.notation;
+			const notation = String(move?.notation?.notation);
 
 			move.variations.forEach((move_var: any[]) => {
 				addVariationToRepertoire(repertoire, logic, move_var, fromNode)
 			});
 
+			let oldStateId = state.id;
+
 			logic.move(notation)
 
-			state = { fen: logic.fen(), id: repertoire.length, parentId, move: notation } 
+			state = { fen: logic.fen(), id: repertoire.states.length } 
 			// console.log(state);
 
-			repertoire.push(state);
-			parentId = state.id;
+			repertoire.states.push(state);
+			let edge: GameMoveEdge = { from: repertoire.states[oldStateId], to: repertoire.states[state.id], notation }
+			repertoire.moves.push(edge);
+
 			// console.log({parentId});
 
 		}
 		for (let i = 0; i < variation.length; i++) {
 			// console.log('UNDO');
-			parentId = state.parentId;
 			logic.undo();
-			if (parentId) {
-				state = repertoire[parentId];
-			}
 		}
 	}
 
 	
 	function buildTree() {
-	 	let repertoire: GameVariationsData = [];
+	 	let repertoire: GameVariationsData = { states: [], moves: [] };
 	 	let logic = new Chess();
-        let startingPosition: GameStateNode = { fen: logic.fen(), parentId: null, id: 0, move: null }
+        let startingPosition: GameStateNode = { fen: logic.fen(), id: 0 }
 
-		repertoire.push(startingPosition);
+		repertoire.states.push(startingPosition);
 
 		if (parsed.length) {
 			let game = parsed[0] as ParseTree;
