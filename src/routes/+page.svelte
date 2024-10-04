@@ -7,11 +7,14 @@
 	import type { PgnOptions, ParseTree } from '@mliebelt/pgn-parser';
 
 
-	const chess = new Chess();
+	let chess = new Chess();
 
-	let repertoire: ChessRepertoire;
+	let repertoire: ChessRepertoire = { states: new Map(), moves: [] };
 
 	$: moveNumber = chess.moveNumber();
+	$: movesInRepertoire = repertoire.moves.filter( move => {
+		move.from_key == keyFromPosition(chess)
+	}) 
 	let parse_options = undefined as unknown as PgnOptions;  
 	$: parsed = parse(pgnToLoad, parse_options) as ParseTree[];
 
@@ -94,23 +97,24 @@
 		return key;
 	}
 	
-	function buildTree(repertoire: ChessRepertoire) {
-	 	repertoire = { states: new Map(), moves: [] };
-	 	let logic = new Chess();
+	function buildRepertoire(game: ParseTree, initialPosition?: string) {
+	 	let repertoire: ChessRepertoire = { states: new Map(), moves: [] };
+	 	let logic = new Chess(initialPosition);
 
 		addPositionToRepertoire(logic, repertoire);
+		addVariationToRepertoire(repertoire, logic, game.moves);
 
+		return repertoire;
+	}
+
+	function handleLogClick() {
 		if (parsed.length) {
 			let game = parsed[0] as ParseTree;
 			console.log(game);
 
-			addVariationToRepertoire(repertoire, logic, game.moves);
+			repertoire = buildRepertoire(game);
 			console.log(repertoire);
 		}
-	}
-
-	function handleLogClick() {
-		buildTree(repertoire);
 	}
 
 	let pgnToLoad = `1. e4 (1. d4 Nf6) 1... e5 2. Nf3 (2. Bc4 f6 3. Nf3 (3. Qh5+ g6 4. Qh3)) (2. d4 exd4) 2... Nc6 3. Bb5`
@@ -131,6 +135,16 @@
 	{/each}
 </div>
 {/each}
+
+<div class="container-fluid">
+	{ moveNumber }
+	{#each movesInRepertoire as move, move_idx}
+		<button on:click={() => console.log(move)} >
+			{ move.notation }
+		</button>
+	{/each}
+</div>
+
 
 
 <style>
