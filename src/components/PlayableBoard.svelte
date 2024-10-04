@@ -43,8 +43,7 @@
 		});	
 	}
 
-	function playerMadeMove(chessground: Chessground, chess: Chess) {
-        return (orig: string, dest: string, metadata: any) => {
+	const playerMadeMove = (orig: string, dest: string, metadata: any) => {
             // console.log(orig, dest, metadata)
             // console.log(chess.get(orig as Square), chess.moves({ square: orig as Square, verbose: true }));
 
@@ -57,19 +56,8 @@
 			}
 
 			// after move accepted
-			const move = chess.move({from: orig, to: dest});
-			const fen = move.after;
-			const color = chess.turn() == 'w' ? 'white' : 'black';
-			const dests = toDests(chess);
-            chessground.set({
-				turnColor: color,
-				fen,
-				movable: {
-					color,
-					dests
-				}
-			});
-		}
+			makeMove(orig, dest);
+
 	}
 
 	let config = {
@@ -83,7 +71,11 @@
 	onMount(async () => {
 		chessground.set({
 			fen: chess.fen(),
-			movable: { events: { after: playerMadeMove(chessground, chess) } }
+			movable: { events: { after: playerMadeMove } },
+			highlight: {
+				check: true,
+				lastMove: true,
+			}
 		});
 	});
 
