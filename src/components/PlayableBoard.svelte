@@ -2,7 +2,7 @@
 	import { Chessground } from 'svelte-chessground';
     import { Chess, SQUARES } from 'chess.js';
     import type { Square } from 'chess.js'
-	import { onMount } from 'svelte';
+	// import { onMount } from 'svelte';
 	import {toDests, playOtherSide} from '$lib/util';
 
 	export let fen: string | undefined = undefined;
@@ -62,29 +62,23 @@
 
 	}
 
-	// let config = {
-	// 	movable: {
-	// 		color: 'white' as "white" | "black",
-	// 		free: false,
-	// 		dests: toDests(chess)
-	// 	}
-	// };
-
-	onMount(async () => {
-		chessground.set({
-			fen: chess.fen(),
-			movable: { events: { after: playerMadeMove } },
-			highlight: {
-				check: true,
-				lastMove: true,
-			}
-		});
-	});
+	let config = {
+		movable: {
+			color: 'white' as "white" | "black",
+			free: false,
+			dests: toDests(chess),
+			events: { after: playerMadeMove }
+		},
+		highlight: {
+			check: true,
+			lastMove: true,
+		}
+	};
 
 </script>
 
 <div class="container" id="board">
-	<Chessground bind:this={chessground} {fen} />
+	<Chessground bind:this={chessground} {config} />
 	{#if showPromotionDialog}
 		<div class="modal">
 			{#each ['q', 'n', 'r', 'b'] as figure}
@@ -93,7 +87,9 @@
 		</div>
 	{/if}
 </div>
-
+<div>
+	{ fen }
+</div>
 
 <style>
 	.container {
