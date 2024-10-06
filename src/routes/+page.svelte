@@ -1,14 +1,8 @@
 <script lang="ts">
-	import { Chessground } from 'svelte-chessground';
 	import { Chess } from 'chess.js';
-	import { onMount } from 'svelte';
-	import {toDests, playOtherSide} from '$lib/util';
 	import { parse } from '@mliebelt/pgn-parser';
 	import type { PgnOptions, ParseTree } from '@mliebelt/pgn-parser';
 	import PlayableBoard from '../components/PlayableBoard.svelte';
-
-
-	let chess = new Chess();
 
 	let repertoire: ChessRepertoire = { 
 		id: '',
@@ -17,29 +11,8 @@
 		moves: [] 
 	};
 
-	$: moveNumber = chess.moveNumber();
-	$: movesInRepertoire = repertoire.moves.filter( move => {
-		move.from_key == keyFromPosition(chess)
-	}) 
 	let parse_options = undefined as unknown as PgnOptions;  
 	$: parsed = parse(pgnToLoad, parse_options) as ParseTree[];
-
-	let chessground: Chessground;
-
-	let config = {
-		movable: {
-			color: 'white' as "white" | "black",
-			free: false,
-			dests: toDests(chess)
-		}
-	};
-
-	onMount(async () => {
-		chessground.set({
-			movable: { events: { after: playOtherSide(chessground, chess) } }
-		});
-	});
-
 	type GameStateNode = {
 		id: number,
 
@@ -130,9 +103,6 @@
 </script>
 
 <PlayableBoard></PlayableBoard>
-<div class="container" id="board">
-	<Chessground bind:this={chessground} {config} />
-</div>
 <button on:click={handleLogClick}>log</button>
 <textarea bind:value={pgnToLoad}></textarea>
 
@@ -145,21 +115,3 @@
 	{/each}
 </div>
 {/each}
-
-<div class="container-fluid">
-	{ moveNumber }
-	{#each movesInRepertoire as move, move_idx}
-		<button on:click={() => console.log(move)} >
-			{ move.notation }
-		</button>
-	{/each}
-</div>
-
-
-
-<style>
-	.container {
-		width: 400px;
-		height: 400px;
-	}
-</style>
