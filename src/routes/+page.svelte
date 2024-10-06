@@ -5,11 +5,17 @@
 	import {toDests, playOtherSide} from '$lib/util';
 	import { parse } from '@mliebelt/pgn-parser';
 	import type { PgnOptions, ParseTree } from '@mliebelt/pgn-parser';
+	import PlayableBoard from '../components/PlayableBoard.svelte';
 
 
 	let chess = new Chess();
 
-	let repertoire: ChessRepertoire = { states: new Map(), moves: [] };
+	let repertoire: ChessRepertoire = { 
+		id: '',
+		side: 'w',
+		states: new Map(), 
+		moves: [] 
+	};
 
 	$: moveNumber = chess.moveNumber();
 	$: movesInRepertoire = repertoire.moves.filter( move => {
@@ -47,6 +53,8 @@
 	}
 
 	type ChessRepertoire = {
+		id: string,
+		side: 'w' | 'b',
 		states: Map<string, GameStateNode>;
 		moves: GameMoveEdge[]
 	}
@@ -94,11 +102,12 @@
 
 	function keyFromPosition(position: Chess) {
 		let key = position.fen();
-		return key;
+		const parts = key.split(' ');
+		return parts.slice(0, 4).join(' ');
 	}
 	
-	function buildRepertoire(game: ParseTree, initialPosition?: string) {
-	 	let repertoire: ChessRepertoire = { states: new Map(), moves: [] };
+	function buildRepertoire(repertoire: ChessRepertoire, game: ParseTree, initialPosition?: string) {
+	 	repertoire = { ...repertoire, states: new Map(), moves: [] }  
 	 	let logic = new Chess(initialPosition);
 
 		addPositionToRepertoire(logic, repertoire);
@@ -112,7 +121,7 @@
 			let game = parsed[0] as ParseTree;
 			console.log(game);
 
-			repertoire = buildRepertoire(game);
+			repertoire = buildRepertoire(repertoire, game);
 			console.log(repertoire);
 		}
 	}
@@ -120,6 +129,7 @@
 	let pgnToLoad = `1. e4 (1. d4 Nf6) 1... e5 2. Nf3 (2. Bc4 f6 3. Nf3 (3. Qh5+ g6 4. Qh3)) (2. d4 exd4) 2... Nc6 3. Bb5`
 </script>
 
+<PlayableBoard></PlayableBoard>
 <div class="container" id="board">
 	<Chessground bind:this={chessground} {config} />
 </div>
