@@ -4,6 +4,7 @@
 	import type { PgnOptions, ParseTree } from '@mliebelt/pgn-parser';
 	import PlayableBoard from '../components/PlayableBoard.svelte';
 	import { DirectedGraph } from 'graphology';
+	import Graph from '../components/Graph.svelte';
 
 	let repertoire: DirectedGraph = new DirectedGraph()
 
@@ -45,8 +46,8 @@
 			let move_data = logic.move(notation);
 			let { from, to, piece, flags } = move_data;
 			const position_key = keyFromPosition(logic);
-			repertoire.mergeNode(position_key, { fen: logic.fen() });
-			repertoire.mergeEdge(old_position_key, position_key, { move: notation, from, to, piece, flags })
+			repertoire.mergeNode(position_key, { fen: logic.fen(), label: position_key });
+			repertoire.mergeEdge(old_position_key, position_key, { label: notation, forceLabel: true, move: notation, from, to, piece, flags })
 
 			// console.log({parentId});
 
@@ -100,6 +101,7 @@
 </script>
 
 <PlayableBoard></PlayableBoard>
+<Graph graph={repertoire}></Graph>
 <button onclick={handleLogClick}>log</button>
 <textarea bind:value={pgnToLoad}></textarea>
 
