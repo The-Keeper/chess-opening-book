@@ -11,8 +11,12 @@
 		moves: [] 
 	};
 
+	let pgnToLoad = $state(`1. e4 (1. d4 Nf6) 1... e5 2. Nf3 (2. Bc4 f6 3. Nf3 (3. Qh5+ g6 4. Qh3)) (2. d4 exd4) 2... Nc6 3. Bb5`);
+
+
+
 	let parse_options = undefined as unknown as PgnOptions;  
-	$: parsed = parse(pgnToLoad, parse_options) as ParseTree[];
+	let parsed = $derived(parse(pgnToLoad, parse_options) as ParseTree[]);
 	type GameStateNode = {
 		id: number,
 
@@ -99,17 +103,16 @@
 		}
 	}
 
-	let pgnToLoad = `1. e4 (1. d4 Nf6) 1... e5 2. Nf3 (2. Bc4 f6 3. Nf3 (3. Qh5+ g6 4. Qh3)) (2. d4 exd4) 2... Nc6 3. Bb5`
 </script>
 
 <PlayableBoard></PlayableBoard>
-<button on:click={handleLogClick}>log</button>
+<button onclick={handleLogClick}>log</button>
 <textarea bind:value={pgnToLoad}></textarea>
 
 {#each parsed as game, game_idx}
 <div class="container-fluid">
 	{#each game.moves as move, move_idx}
-		<button on:click={() => console.log(move)} >
+		<button onclick={() => console.log(move)} >
 			{ move.notation.notation }
 		</button>
 	{/each}
