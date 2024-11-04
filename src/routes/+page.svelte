@@ -42,11 +42,11 @@
 			});
 
 			let old_position_key = keyFromPosition(logic);
-			logic.move(notation);
-			
+			let move_data = logic.move(notation);
+			let { from, to, piece, flags } = move_data;
 			const position_key = keyFromPosition(logic);
 			repertoire.mergeNode(position_key, { fen: logic.fen() });
-			repertoire.mergeEdge(old_position_key, position_key, { move: notation })
+			repertoire.mergeEdge(old_position_key, position_key, { move: notation, from, to, piece, flags })
 
 			// console.log({parentId});
 
