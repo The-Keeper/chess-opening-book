@@ -3,13 +3,9 @@
 	import { parse } from '@mliebelt/pgn-parser';
 	import type { PgnOptions, ParseTree } from '@mliebelt/pgn-parser';
 	import PlayableBoard from '../components/PlayableBoard.svelte';
+	import { DirectedGraph } from 'graphology';
 
-	let repertoire: ChessRepertoire = { 
-		id: '',
-		side: 'w',
-		states: new Map(), 
-		moves: [] 
-	};
+	let repertoire: DirectedGraph = new DirectedGraph()
 
 	let pgnToLoad = $state(`1. e4 (1. d4 Nf6) 1... e5 2. Nf3 (2. Bc4 f6 3. Nf3 (3. Qh5+ g6 4. Qh3)) (2. d4 exd4) 2... Nc6 3. Bb5`);
 
@@ -36,8 +32,7 @@
 		moves: GameMoveEdge[]
 	}
 
-	function addVariationToRepertoire( repertoire: ChessRepertoire, logic: Chess, variation: any[] ) {
-
+	function addVariationToRepertoire( repertoire: DirectedGraph, logic: Chess, variation: any[] ) {
 		for (let i = 0; i < variation.length; i++) {
 			const move = variation[i];
 			const notation = String(move?.notation?.notation);
@@ -46,14 +41,12 @@
 				addVariationToRepertoire(repertoire, logic, move_var)
 			});
 
-			let oldStateKey = keyFromPosition(logic);
+			let old_position_key = keyFromPosition(logic);
 			logic.move(notation);
-			let newStateKey = addPositionToRepertoire(logic, repertoire);
-
-
 			
-			let edge: GameMoveEdge = { from_key: oldStateKey, to_key: newStateKey, notation }
-			repertoire.moves.push(edge);
+			const position_key = keyFromPosition(logic);
+			repertoire.mergeNode(position_key, { fen: logic.fen() });
+			repertoire.mergeEdge(old_position_key, position_key, { move: notation })
 
 			// console.log({parentId});
 
@@ -83,11 +76,12 @@
 		return parts.slice(0, 4).join(' ');
 	}
 	
-	function buildRepertoire(repertoire: ChessRepertoire, game: ParseTree, initialPosition?: string) {
-	 	repertoire = { ...repertoire, states: new Map(), moves: [] }  
+	function buildRepertoire(repertoire: DirectedGraph, game: ParseTree, initialPosition?: string) {
 	 	let logic = new Chess(initialPosition);
 
-		addPositionToRepertoire(logic, repertoire);
+		 const position_key = keyFromPosition(logic);
+		repertoire.mergeNode(position_key, { fen: logic.fen() });
+
 		addVariationToRepertoire(repertoire, logic, game.moves);
 
 		return repertoire;
