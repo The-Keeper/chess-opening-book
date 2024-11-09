@@ -6,7 +6,7 @@
 	import { DirectedGraph } from 'graphology';
 	import Graph from '../components/Graph.svelte';
 
-	let repertoire: DirectedGraph = new DirectedGraph()
+	let repertoire: DirectedGraph = $state(new DirectedGraph())
 
 	let pgnToLoad = $state(`1. e4 (1. d4 Nf6) 1... e5 2. Nf3 (2. Bc4 f6 3. Nf3 (3. Qh5+ g6 4. Qh3)) (2. d4 exd4) 2... Nc6 3. Bb5`);
 

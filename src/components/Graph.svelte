@@ -29,7 +29,7 @@
 
 </script>
 
-<h1>Sigma graph exemple</h1>
+<h1>Sigma graph example</h1>
 <div id="sigma-container"></div>
 
 <button onclick={ renderGraph }>render</button>
